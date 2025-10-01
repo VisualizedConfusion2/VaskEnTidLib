@@ -4,6 +4,7 @@
     {
         public int ApartmentNR { get; set; }
         public int DepartmentID { get; set; }
-        public int 
+        public string Name { get; set; } = string.Empty;
+        public int UserTypeID { get; set; }
     }
 }
