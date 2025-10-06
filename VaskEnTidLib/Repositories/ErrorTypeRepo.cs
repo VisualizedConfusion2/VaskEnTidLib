@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VaskEnTidLib.Repositories
 {
-    class ErrorTypeRepo
+    public class ErrorTypeRepo
     {
     }
 }

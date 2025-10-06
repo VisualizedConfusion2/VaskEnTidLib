@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VaskEnTidLib.Repositories
 {
-    public interface IBookingRepo
+    public class UserTypeRepo
     {
     }
 }

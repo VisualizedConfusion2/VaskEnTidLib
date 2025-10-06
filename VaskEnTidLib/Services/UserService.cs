@@ -8,22 +8,12 @@ namespace VaskEnTidLib.Services
 {
     public class UserService : IUserService
     {
-        public void CreateUser(User user)
+        public User? CreateUser(int userId, int targetUserId)
         {
             throw new NotImplementedException();
         }
 
-        public User? CreateUserAsync(User user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool DeleteUser(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public User? GetAllUsers()
+        public bool DeleteUser(int userId, int targetUserId)
         {
             throw new NotImplementedException();
         }
@@ -33,12 +23,12 @@ namespace VaskEnTidLib.Services
             throw new NotImplementedException();
         }
 
-        public User? GetUsersByDepartmentId(int departmentId)
+        public User? GetUsersByDepartmentId(int departmentId, int userId)
         {
             throw new NotImplementedException();
         }
 
-        public bool UpdateUser(User user)
+        public bool UpdateUser(int userId, int targetUserId)
         {
             throw new NotImplementedException();
         }
