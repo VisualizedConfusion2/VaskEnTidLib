@@ -8,63 +8,39 @@ namespace VaskEnTidLib.Services
 {
     public class UserService : IUserService
     {
-        private readonly List<User> _users = new();
-
-        // Implementing the interface methods explicitly
-        User? IUserService.GetUserById(int userId)
+        public void CreateUser(User user)
         {
-            return _users.FirstOrDefault(u => u.UserId == userId);
+            throw new NotImplementedException();
         }
 
-        IEnumerable<User> IUserService.GetAllUsers()
+        public User? CreateUserAsync(User user)
         {
-            return _users;
+            throw new NotImplementedException();
         }
 
-        User IUserService.CreateUser(User user)
+        public bool DeleteUser(int userId)
         {
-            user.UserId = _users.Count > 0 ? _users.Max(u => u.UserId) + 1 : 1;
-            _users.Add(user);
-            return user;
+            throw new NotImplementedException();
         }
 
-        bool IUserService.UpdateUser(User user)
+        public User? GetAllUsers()
         {
-            var existing = _users.FirstOrDefault(u => u.UserId == user.UserId);
-            if (existing == null) return false;
-
-            existing.ApartmentNumber = user.ApartmentNumber;
-            existing.Name = user.Name;
-            existing.Phone = user.Phone;
-            existing.Email = user.Email;
-            existing.Password = user.Password;
-            existing.DepartmentID = user.DepartmentID;
-            existing.UserTypeID = user.UserTypeID;
-            return true;
+            throw new NotImplementedException();
         }
 
-        bool IUserService.DeleteUser(int userId)
+        public User? GetUserById(int userId)
         {
-            var user = _users.FirstOrDefault(u => u.UserId == userId);
-            if (user == null) return false;
-            _users.Remove(user);
-            return true;
+            throw new NotImplementedException();
         }
 
-        IEnumerable<User> IUserService.GetUsersByDepartmentId(int departmentId)
+        public User? GetUsersByDepartmentId(int departmentId)
         {
-            return _users.Where(u => u.DepartmentID == departmentId);
+            throw new NotImplementedException();
         }
 
-        async Task<User> IUserService.CreateUserAsync(User user)
+        public bool UpdateUser(User user)
         {
-            // Simulate async operation
-            return await Task.Run(() =>
-            {
-                user.UserId = _users.Count > 0 ? _users.Max(u => u.UserId) + 1 : 1;
-                _users.Add(user);
-                return user;
-            });
+            throw new NotImplementedException();
         }
     }
 }

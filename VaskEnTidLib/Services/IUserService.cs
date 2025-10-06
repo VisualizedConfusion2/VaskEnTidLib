@@ -6,15 +6,9 @@ namespace VaskEnTidLib.Interfaces
     public interface IUserService
     {
         User? GetUserById(int userId);
-        IEnumerable<User> GetAllUsers();
-        User CreateUser(User user);
-        bool UpdateUser(User user);
-        bool DeleteUser(int userId);
-
-        // Show users based on department id
-        IEnumerable<User> GetUsersByDepartmentId(int departmentId);
-
-        // Create a new user (async version)
-        Task<User> CreateUserAsync(User user);
+        User? CreateUser(int userId, int targetUserId);
+        bool UpdateUser(int userId, int targetUserId);
+        bool DeleteUser(int userId, int targetUserId);
+        User? GetUsersByDepartmentId(int departmentId, int userId);
     }
 }

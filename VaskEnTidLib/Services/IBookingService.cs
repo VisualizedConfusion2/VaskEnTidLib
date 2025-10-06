@@ -1,14 +1,15 @@
-﻿using VaskEnTidLib.Models;
+﻿using System.Collections.Generic;
+using VaskEnTidLib.Models;
 
 namespace VaskEnTidLib.Services
 {
     public interface IBookingService
     {
-        Booking Book(Booking booking);
-        IEnumerable<Booking> GetBookings();
-        IEnumerable<Booking> GetBookingsByUser(int userId);
-        IEnumerable<Booking> GetBookingsByMachine(int machineId);
-        bool CancelBooking(int bookingId);
+        IReadOnlyList<Booking> GetBookingsByUser(int userId);
+        IReadOnlyList<Booking> GetBookingsByMachine(int machineId);
         Booking? GetBookingById(int bookingId);
+        bool CancelBooking(int bookingId);
+        Booking CreateBooking(Booking booking);
+        bool UpdateBooking(Booking updatedBooking);
     }
 }

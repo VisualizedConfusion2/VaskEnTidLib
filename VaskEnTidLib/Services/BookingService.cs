@@ -1,40 +1,93 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using VaskEnTidLib.Models;
 
 namespace VaskEnTidLib.Services
 {
-
     public class BookingService : IBookingService
     {
-        public Booking Book(Booking booking)
+        private readonly List<Booking> _bookings = new();
+
+        public IReadOnlyList<Booking> GetBookingsByUser(int userId)
         {
-            throw new NotImplementedException();
+            return _bookings
+                .Where(b => b.UserId == userId)
+                .OrderBy(b => b.Date)
+                .ThenBy(b => b.StartTime)
+                .ToList();
         }
 
-        public bool CancelBooking(int bookingId)
+        public IReadOnlyList<Booking> GetBookingsByMachine(int machineId)
         {
-            throw new NotImplementedException();
+            return _bookings
+                .Where(b => b.MachineId == machineId)
+                .OrderBy(b => b.Date)
+                .ThenBy(b => b.StartTime)
+                .ToList();
         }
 
         public Booking? GetBookingById(int bookingId)
         {
-            throw new NotImplementedException();
+            return _bookings.FirstOrDefault(b => b.BookingID == bookingId);
         }
 
-        public IEnumerable<Booking> GetBookings()
+        public bool CancelBooking(int bookingId)
         {
-            throw new NotImplementedException();
+            var booking = _bookings.FirstOrDefault(b => b.BookingID == bookingId);
+            if (booking == null)
+                return false;
+
+            _bookings.Remove(booking);
+            return true;
         }
 
-        public IEnumerable<Booking> GetBookingsByMachine(int machineId)
+        public Booking? CreateBooking(Booking booking)
         {
-            throw new NotImplementedException();
+            if (booking == null)
+                throw new ArgumentNullException(nameof(booking));
+
+            // Check for overlapping bookings on the same machine & date
+            bool hasConflict = _bookings.Any(b =>
+                b.MachineId == booking.MachineId &&
+                b.Date == booking.Date &&
+                ((booking.StartTime >= b.StartTime && booking.StartTime < b.EndTime) ||
+                 (booking.EndTime > b.StartTime && booking.EndTime <= b.EndTime) ||
+                 (booking.StartTime <= b.StartTime && booking.EndTime >= b.EndTime)));
+
+            if (hasConflict)
+                return null; // Conflict found — booking not created
+
+            booking.BookingID = _bookings.Any() ? _bookings.Max(b => b.BookingID) + 1 : 1;
+            _bookings.Add(booking);
+            return booking;
         }
 
-        public IEnumerable<Booking> GetBookingsByUser(int userId)
+        public bool UpdateBooking(Booking updatedBooking)
         {
-            throw new NotImplementedException();
+            var existing = _bookings.FirstOrDefault(b => b.BookingID == updatedBooking.BookingID);
+            if (existing == null)
+                return false;
+
+            // Check for overlap excluding the booking being updated
+            bool hasConflict = _bookings.Any(b =>
+                b.MachineId == updatedBooking.MachineId &&
+                b.Date == updatedBooking.Date &&
+                b.BookingID != updatedBooking.BookingID &&
+                ((updatedBooking.StartTime >= b.StartTime && updatedBooking.StartTime < b.EndTime) ||
+                 (updatedBooking.EndTime > b.StartTime && updatedBooking.EndTime <= b.EndTime) ||
+                 (updatedBooking.StartTime <= b.StartTime && updatedBooking.EndTime >= b.EndTime)));
+
+            if (hasConflict)
+                return false; // Conflict found — cannot update
+
+            existing.Date = updatedBooking.Date;
+            existing.StartTime = updatedBooking.StartTime;
+            existing.EndTime = updatedBooking.EndTime;
+            existing.MachineId = updatedBooking.MachineId;
+            existing.UserId = updatedBooking.UserId;
+
+            return true;
         }
     }
 }
