@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using VaskEnTidLib.Models;
+using VaskEnTidLib.Repositories;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaskEnTidLib.Services
 {
     public class BookingService : IBookingService
     {
         private readonly List<Booking> _bookings = new();
+        private BookingRepo _bookingRepo;
+        private readonly string _connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;Packet Size=4096;Command Timeout=0; Database=LaundryManagementDB ";
+
+        public BookingService()
+        {
+            _bookingRepo = new BookingRepo(_connectionString);
+        }
 
         public IReadOnlyList<Booking> GetBookingsByUser(int userId)
         {
@@ -42,7 +52,7 @@ namespace VaskEnTidLib.Services
             return true;
         }
 
-        public Booking? CreateBooking(Booking booking)
+        public Booking CreateBooking(Booking booking)
         {
             if (booking == null)
                 throw new ArgumentNullException(nameof(booking));
@@ -56,7 +66,7 @@ namespace VaskEnTidLib.Services
                  (booking.StartTime <= b.StartTime && booking.EndTime >= b.EndTime)));
 
             if (hasConflict)
-                return null; // Conflict found — booking not created
+                throw new InvalidOperationException("Booking conflict detected.");
 
             booking.BookingID = _bookings.Any() ? _bookings.Max(b => b.BookingID) + 1 : 1;
             _bookings.Add(booking);

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VaskEnTidLib.Repositories
+namespace VaskEnTidLib.Services
 {
-    public interface IMachineRepo
+    internal class ErrorTypeService
     {
     }
 }

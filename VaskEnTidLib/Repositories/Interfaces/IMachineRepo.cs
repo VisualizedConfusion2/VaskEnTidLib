@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VaskEnTidLib.Repositories
+namespace VaskEnTidLib.Repositories.Interfaces
 {
-    public interface IErrorMessageRepo
+    public interface IMachineRepo
     {
     }
 }
