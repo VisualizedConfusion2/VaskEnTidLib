@@ -8,96 +8,18 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaskEnTidLib.Services
 {
-    public class BookingService : IBookingService
+    public class BookingService
     {
-        private readonly List<Booking> _bookings = new();
-        private BookingRepo _bookingRepo;
-        private readonly string _connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;Packet Size=4096;Command Timeout=0; Database=LaundryManagementDB ";
+        private readonly BookingRepo _repository;
 
-        public BookingService()
+        public BookingService(BookingRepo repository)
         {
-            _bookingRepo = new BookingRepo(_connectionString);
+            _repository = repository;
         }
 
-        public IReadOnlyList<Booking> GetBookingsByUser(int userId)
+        public List<Booking> GetBookingsByUserId(int userId)
         {
-            return _bookings
-                .Where(b => b.UserId == userId)
-                .OrderBy(b => b.Date)
-                .ThenBy(b => b.StartTime)
-                .ToList();
-        }
-
-        public IReadOnlyList<Booking> GetBookingsByMachine(int machineId)
-        {
-            return _bookings
-                .Where(b => b.MachineId == machineId)
-                .OrderBy(b => b.Date)
-                .ThenBy(b => b.StartTime)
-                .ToList();
-        }
-
-        public Booking? GetBookingById(int bookingId)
-        {
-            return _bookings.FirstOrDefault(b => b.BookingID == bookingId);
-        }
-
-        public bool CancelBooking(int bookingId)
-        {
-            var booking = _bookings.FirstOrDefault(b => b.BookingID == bookingId);
-            if (booking == null)
-                return false;
-
-            _bookings.Remove(booking);
-            return true;
-        }
-
-        public Booking CreateBooking(Booking booking)
-        {
-            if (booking == null)
-                throw new ArgumentNullException(nameof(booking));
-
-            // Check for overlapping bookings on the same machine & date
-            bool hasConflict = _bookings.Any(b =>
-                b.MachineId == booking.MachineId &&
-                b.Date == booking.Date &&
-                ((booking.StartTime >= b.StartTime && booking.StartTime < b.EndTime) ||
-                 (booking.EndTime > b.StartTime && booking.EndTime <= b.EndTime) ||
-                 (booking.StartTime <= b.StartTime && booking.EndTime >= b.EndTime)));
-
-            if (hasConflict)
-                throw new InvalidOperationException("Booking conflict detected.");
-
-            booking.BookingID = _bookings.Any() ? _bookings.Max(b => b.BookingID) + 1 : 1;
-            _bookings.Add(booking);
-            return booking;
-        }
-
-        public bool UpdateBooking(Booking updatedBooking)
-        {
-            var existing = _bookings.FirstOrDefault(b => b.BookingID == updatedBooking.BookingID);
-            if (existing == null)
-                return false;
-
-            // Check for overlap excluding the booking being updated
-            bool hasConflict = _bookings.Any(b =>
-                b.MachineId == updatedBooking.MachineId &&
-                b.Date == updatedBooking.Date &&
-                b.BookingID != updatedBooking.BookingID &&
-                ((updatedBooking.StartTime >= b.StartTime && updatedBooking.StartTime < b.EndTime) ||
-                 (updatedBooking.EndTime > b.StartTime && updatedBooking.EndTime <= b.EndTime) ||
-                 (updatedBooking.StartTime <= b.StartTime && updatedBooking.EndTime >= b.EndTime)));
-
-            if (hasConflict)
-                return false; // Conflict found — cannot update
-
-            existing.Date = updatedBooking.Date;
-            existing.StartTime = updatedBooking.StartTime;
-            existing.EndTime = updatedBooking.EndTime;
-            existing.MachineId = updatedBooking.MachineId;
-            existing.UserId = updatedBooking.UserId;
-
-            return true;
+            return _repository.GetBookingsByUserId(userId);
         }
     }
 }
