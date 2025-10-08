@@ -45,8 +45,6 @@ namespace VaskEnTidLib.Repositories
                         bookings.Add(booking);
                     }
                 }
-
-
             return bookings;
             }
         }
