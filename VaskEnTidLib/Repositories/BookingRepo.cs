@@ -24,27 +24,24 @@ namespace VaskEnTidLib.Repositories
             var bookings = new List<Booking>();
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("SP_SelectBookingsByUserID", conn))
             {
-                using (SqlCommand cmd = new SqlCommand("SP_SelectBookingsByUserID", conn))
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-
-                    conn.Open();
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        var booking = new Booking
                         {
-                            var booking = new Booking
-                            {
-                                BookingID = reader.GetInt32(reader.GetOrdinal("BookingID")),
-                                MachineId = reader.GetInt32(reader.GetOrdinal("MachineID")),
-                                Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("BookingDate"))),
-                                StartTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("StartTime"))),
-                                EndTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("EndTime")))
-                            };
-                            bookings.Add(booking);
-                        }
+                            BookingID = reader.GetInt32(reader.GetOrdinal("BookingID")),
+                            MachineId = reader.GetInt32(reader.GetOrdinal("MachineID")),
+                            Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("BookingDate"))),
+                            StartTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("StartTime"))),
+                            EndTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("EndTime")))
+                        };
+                        bookings.Add(booking);
                     }
                 }
             }
