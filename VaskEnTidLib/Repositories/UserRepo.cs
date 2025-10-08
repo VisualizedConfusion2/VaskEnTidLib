@@ -52,7 +52,6 @@ namespace VaskEnTidLib.Repositories
 
         public User? RegisterUserByCreationCode(string creationCode, string phone, string email, string password)
         {
-            Console.WriteLine("Repo");
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = new SqlCommand("usp_InsertUserFromTempUser", conn))
             {
@@ -66,7 +65,6 @@ namespace VaskEnTidLib.Repositories
                 {
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    Console.WriteLine("User Created");
                     return GetUserByEmail(email);
                 }
                 catch (SqlException ex)

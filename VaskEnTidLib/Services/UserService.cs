@@ -19,7 +19,10 @@ namespace VaskEnTidLib.Services
 
         public User? RegisterUserByCreationCode(string creationCode, string phone, string email, string password)
         {
-            Console.WriteLine("Service");
+            if (string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(creationCode))
+            {
+                return null;
+            }
             return _repo.RegisterUserByCreationCode(creationCode, phone, email, password);
         }
 
