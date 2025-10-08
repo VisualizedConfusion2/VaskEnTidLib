@@ -17,5 +17,11 @@ namespace VaskEnTidLib.Services
             return user.Password == password; // plain-text check
         }
 
+        public User? RegisterUserByCreationCode(string creationCode, string phone, string email, string password)
+        {
+            Console.WriteLine("Service");
+            return _repo.RegisterUserByCreationCode(creationCode, phone, email, password);
+        }
+
     }
 }

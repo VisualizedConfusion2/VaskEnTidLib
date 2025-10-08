@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
-using VaskEnTidLib.Models;
 using Microsoft.Data.SqlClient;
+using VaskEnTidLib.Models;
 
 namespace VaskEnTidLib.Repositories
 {
@@ -46,5 +49,33 @@ namespace VaskEnTidLib.Repositories
 
             return null;
         }
+
+        public User? RegisterUserByCreationCode(string creationCode, string phone, string email, string password)
+        {
+            Console.WriteLine("Repo");
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("usp_InsertUserFromTempUser", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@CreationCode", creationCode);
+                cmd.Parameters.AddWithValue("@Phone", phone);
+                cmd.Parameters.AddWithValue("@Email", email);
+                cmd.Parameters.AddWithValue("@Password", password);
+
+                try
+                {
+                    conn.Open();
+                    cmd.ExecuteNonQuery();
+                    Console.WriteLine("User Created");
+                    return GetUserByEmail(email);
+                }
+                catch (SqlException ex)
+                {
+                    Debug.WriteLine($"Fejl ved oprettelse af bruger: {ex.Message}");
+                    return null;
+                }
+            }
+        }
+
     }
 }
