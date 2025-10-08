@@ -1,36 +1,21 @@
 ﻿using VaskEnTidLib.Models;
-using VaskEnTidLib.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VaskEnTidLib.Repositories;
 
 namespace VaskEnTidLib.Services
 {
-    public class UserService : IUserService
+    public class UserService
     {
-        public User? CreateUser(int userId, int targetUserId)
+        private readonly UserRepo _repo;
+        public UserService(UserRepo repo) => _repo = repo;
+        public bool TryAuthenticate(string email, string password, out User? user)
         {
-            throw new NotImplementedException();
+            user = _repo.GetUserByEmail(email);
+            if (user == null) return false;
+            return user.Password == password; // plain-text check
         }
 
-        public bool DeleteUser(int userId, int targetUserId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public User? GetUserById(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public User? GetUsersByDepartmentId(int departmentId, int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool UpdateUser(int userId, int targetUserId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
