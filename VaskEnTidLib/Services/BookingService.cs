@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
 using VaskEnTidLib.Models;
 using VaskEnTidLib.Repositories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace VaskEnTidLib.Services
 {
@@ -17,9 +14,24 @@ namespace VaskEnTidLib.Services
             _repository = repository;
         }
 
+        // Hent bookinger for en bestemt bruger
         public List<Booking> GetBookingsByUserId(int userId)
         {
             return _repository.GetBookingsByUserId(userId);
+        }
+
+        // Opret en ny booking
+        public bool CreateBooking(int userId, int machineId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        {
+            try
+            {
+                return _repository.CreateBooking(userId, machineId, date, startTime, endTime);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fejl i BookingService.CreateBooking: {ex.Message}");
+                return false;
+            }
         }
     }
 }
