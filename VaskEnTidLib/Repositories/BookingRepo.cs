@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ namespace VaskEnTidLib.Repositories
             var bookings = new List<Booking>();
 
             using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("SP_SelectBookingsByUserID", conn))
+            using (SqlCommand cmd = new SqlCommand("usp_SelectBookingsByUserID", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@UserID", userId);
@@ -36,7 +36,8 @@ namespace VaskEnTidLib.Repositories
                         var booking = new Booking
                         {
                             BookingID = reader.GetInt32(reader.GetOrdinal("BookingID")),
-                            MachineId = reader.GetInt32(reader.GetOrdinal("MachineID")),
+                            MachineID = reader.GetInt32(reader.GetOrdinal("MachineID")),
+                            UserID = userId,
                             Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("BookingDate"))),
                             StartTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("StartTime"))),
                             EndTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("EndTime")))
@@ -44,9 +45,10 @@ namespace VaskEnTidLib.Repositories
                         bookings.Add(booking);
                     }
                 }
-            }
+
 
             return bookings;
+            }
         }
     }
 }
