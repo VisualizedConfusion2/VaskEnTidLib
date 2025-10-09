@@ -73,6 +73,40 @@ namespace VaskEnTidLib.Repositories
                 }
             return bookings;
             }
+
         }
+
+        public List<Booking> GetBookingsInDepartmentByUserId(int userId)
+        {
+            var bookings = new List<Booking>();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("usp_SelectBookingsInDepartmentByUserID", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserID", userId);
+
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var booking = new Booking
+                        {
+                            BookingID = reader.GetInt32(reader.GetOrdinal("BookingID")),
+                            MachineID = reader.GetInt32(reader.GetOrdinal("MachineID")),
+                            UserID = reader.GetInt32(reader.GetOrdinal("UserID")),
+                            Date = DateOnly.FromDateTime(reader.GetDateTime(reader.GetOrdinal("BookingDate"))),
+                            StartTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("StartTime"))),
+                            EndTime = TimeOnly.FromTimeSpan(reader.GetTimeSpan(reader.GetOrdinal("EndTime")))
+                        };
+                        bookings.Add(booking);
+                    }
+                }
+            }
+
+            return bookings;
+        }
+
     }
 }
