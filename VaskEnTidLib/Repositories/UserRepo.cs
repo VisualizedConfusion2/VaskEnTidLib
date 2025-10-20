@@ -75,5 +75,53 @@ namespace VaskEnTidLib.Repositories
             }
         }
 
+//Updates a users information by their UserID using the stored procedure usp_UpdateUserByID any null values will not overwrite existing data handled by COALESCE in SQl
+
+        public bool UpdateUserById(
+            int userId,
+            string? apartmentNumber = null,
+            string? name = null,
+            string? phone = null,
+            string? email = null,
+            string? password = null)
+        {
+            using (var conn = new SqlConnection(_connectionString))
+            using (var cmd = new SqlCommand("usp_UpdateUserByID", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                cmd.Parameters.AddWithValue("@ApartmentNumber", (object?)apartmentNumber ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Name", (object?)name ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Phone", (object?)phone ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Email", (object?)email ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@Password", (object?)password ?? DBNull.Value);
+
+                try
+                {
+                    conn.Open();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    if (rowsAffected == 0)
+                    {
+                        Debug.WriteLine($"No user found with UserID {userId}.");
+                        return false;
+                    }
+
+                    Debug.WriteLine($"User {userId} updated successfully.");
+                    return true;
+                }
+                catch (SqlException ex)
+                {
+                    Debug.WriteLine($"SQL error during user update: {ex.Message}");
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Unexpected error during user update: {ex.Message}");
+                    return false;
+                }
+            }
+        }
     }
 }
