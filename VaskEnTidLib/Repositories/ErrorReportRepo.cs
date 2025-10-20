@@ -15,37 +15,40 @@ namespace VaskEnTidLib.Repositories
             _connectionString = connectionString;
         }
 
-        public List<ErrorReport> GetAllErrorReports()
+        public List<ErrorReport> GetErrorReportByUserId(int userId)
         {
             var errorReports = new List<ErrorReport>();
 
-            using (var connection = new SqlConnection(_connectionString))
-            using (var command = new SqlCommand("usp_SelectFromErrorReports", connection))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("usp_SelectErrorReportsByUserID", conn))
             {
-                command.CommandType = CommandType.StoredProcedure;
-
-                connection.Open();
-                using (var reader = command.ExecuteReader())
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@UserID", userId);
+                conn.Open();
+                using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
-                        var report = new ErrorReport
+                        var errorReport = new ErrorReport
                         {
                             ErrorID = reader.GetInt32(reader.GetOrdinal("ErrorID")),
                             MachineID = reader.GetInt32(reader.GetOrdinal("MachineID")),
+                            MachineName = reader.GetString(reader.GetOrdinal("MachineName")),
                             UserID = reader.GetInt32(reader.GetOrdinal("UserID")),
-                            ErrorTypeID = reader.GetInt32(reader.GetOrdinal("ErrorTypeID")),
-                            StatusID = reader.GetInt32(reader.GetOrdinal("StatusID")),
-                            Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                            UserName = reader.GetString(reader.GetOrdinal("UserName")),
+                            ErrorType = reader.GetString(reader.GetOrdinal("ErrorType")),
+                            Status = reader.GetString(reader.GetOrdinal("Status")),
+                            Description = reader.GetString(reader.GetOrdinal("Description")),
                             DateCreated = reader.GetDateTime(reader.GetOrdinal("DateCreated"))
                         };
 
-                        errorReports.Add(report);
+                        errorReports.Add(errorReport);
                     }
                 }
             }
 
             return errorReports;
         }
+
     }
 }

@@ -8,44 +8,15 @@ namespace VaskEnTidLib.Services
     {
         private readonly ErrorReportRepo _errorReportRepo;
 
-        public ErrorReportService(string connectionString)
+        public ErrorReportService(ErrorReportRepo errorReportRepo)
         {
-            _errorReportRepo = new ErrorReportRepo(connectionString);
+            _errorReportRepo = errorReportRepo;
         }
 
-        /// <summary>
-        /// Gets all error reports from the database.
-        /// </summary>
-        public List<ErrorReport> GetAllErrorReports()
+        public List<ErrorReport> GetErrorReportByUserId(int userId)
         {
-            return _errorReportRepo.GetAllErrorReports();
+            return _errorReportRepo.GetErrorReportByUserId(userId);
         }
 
-        /// <summary>
-        /// Example: Filters error reports by machine ID.
-        /// </summary>
-        public List<ErrorReport> GetErrorReportsByMachine(int machineId)
-        {
-            var allReports = _errorReportRepo.GetAllErrorReports();
-            return allReports.FindAll(r => r.MachineID == machineId);
-        }
-
-        /// <summary>
-        /// Example: Gets all reports that match a given status.
-        /// </summary>
-        public List<ErrorReport> GetReportsByStatus(int statusId)
-        {
-            var allReports = _errorReportRepo.GetAllErrorReports();
-            return allReports.FindAll(r => r.StatusID == statusId);
-        }
-
-        /// <summary>
-        /// Example: Gets a single report by its ID.
-        /// </summary>
-        public ErrorReport? GetErrorReportById(int errorId)
-        {
-            var allReports = _errorReportRepo.GetAllErrorReports();
-            return allReports.Find(r => r.ErrorID == errorId);
-        }
     }
 }
