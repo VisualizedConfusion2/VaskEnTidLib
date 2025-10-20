@@ -21,7 +21,7 @@ namespace VaskEnTidLib.Services
         }
 
         // Opret en ny booking
-        public bool CreateBooking(int userId, int machineId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        public (bool Success, string? ErrorMessage) CreateBooking(int userId, int machineId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             try
             {
@@ -29,8 +29,7 @@ namespace VaskEnTidLib.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Fejl i BookingService.CreateBooking: {ex.Message}");
-                return false;
+                return (false, ex.Message);
             }
         }
     }

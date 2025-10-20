@@ -19,7 +19,7 @@ namespace VaskEnTidLib.Repositories
         {
             _connectionString = connectionString;
         }
-        public bool CreateBooking(int userId, int machineId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
+        public (bool Success, string? ErrorMessage) CreateBooking(int userId, int machineId, DateOnly date, TimeOnly startTime, TimeOnly endTime)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             using (SqlCommand cmd = new SqlCommand("usp_CreateBooking", conn))
@@ -35,13 +35,12 @@ namespace VaskEnTidLib.Repositories
                 {
                     conn.Open();
                     cmd.ExecuteNonQuery();
-                    return true; // booking oprettet succesfuldt
+                    return (true, null); // booking created succesfully
                 }
                 catch (SqlException ex)
                 {
-                    // Log evt. fejlbesked, fx fra RAISERROR i SQL
-                    Console.WriteLine($"Fejl ved oprettelse af booking: {ex.Message}");
-                    return false;
+                    // return the SQL error message (from RAISERROR)
+                    return (false, ex.Message);
                 }
             }
         }
