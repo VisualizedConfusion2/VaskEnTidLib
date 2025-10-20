@@ -25,6 +25,25 @@ namespace VaskEnTidLib.Services
             }
             return _repo.RegisterUserByCreationCode(creationCode, phone, email, password);
         }
+        public (bool Success, string Message) UpdateUser(int userId,string? apartmentNumber = null,string? name = null,string? phone = null,string? email = null,string? password = null)
+        {
+            if (userId <= 0)
+                return (false, "Ugyldigt bruger-ID.");
+
+            try
+            {
+                bool result = _repo.UpdateUserById(userId, apartmentNumber, name, phone, email, password);
+
+                if (result)
+                    return (true, "Bruger blev opdateret succesfuldt.");
+                else
+                    return (false, "Ingen bruger blev opdateret. Kontrollér UserID.");
+            }
+            catch (Exception ex)
+            {
+                return (false, $"Fejl under opdatering af bruger: {ex.Message}");
+            }
+        }
 
     }
 }
