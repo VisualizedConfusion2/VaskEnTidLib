@@ -44,6 +44,11 @@ namespace VaskEnTidLib.Repositories
                 }
             }
         }
+        /// <summary>
+        /// Henter Bookin bruger id
+        /// </summary>
+        /// <param name="userId">Det gør noget</param>
+        /// <returns></returns>
         public List<Booking> GetBookingsByUserId(int userId)
         {
             var bookings = new List<Booking>();
